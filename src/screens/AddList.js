@@ -19,8 +19,8 @@ export default function AddList({navigation}){
                 <Select.Item label="UI Designing" value="ui" />
                 <Select.Item label="Backend Development" value="backend" />
                 </Select>
-                <TextInput placeholder="Name" style={styles.input}/>
-            <TextArea h={20} placeholder="Text Area Placeholder" w="75%" maxW="310" margin={1} backgroundColor="#E9E9E9" borderColor={"black"} fontWeight="bold" color={"black"} minWidth="310" />
+                <TextInput placeholder="Date" style={styles.input}/>
+            <TextArea h={20} placeholder="Description" w="75%" maxW="310" margin={1} backgroundColor="#E9E9E9" borderColor={"black"} fontWeight="bold" color={"black"} minWidth="310" />
             <TouchableOpacity title="Login" style={styles.button}><Text style={{fontSize:20, fontWeight:'bold', color:"#FFFFFF"}}>Add List</Text></TouchableOpacity>
         </View>
     )

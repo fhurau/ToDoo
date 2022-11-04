@@ -1,15 +1,59 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { Colors } from "react-native/Libraries/NewAppScreen";
+import axios from "axios";
+import React from "react";
 
 export default function Register({navigation}){
+    const [form, setForm] = React.useState({
+        firstName:'',
+        email:'',
+        password:''
+    });
+
+    const handleOnChange =(name, value) => {
+        setForm({
+            ...form,
+            [name]: value,
+        });
+    };
+
+    const handleOnPress = async () => {
+        try {
+            const config = {
+                headers: {
+                    'Content-type': 'application/json',
+                },
+            };
+
+            const body = JSON.stringify(form);
+
+            const response = await axios.post('https://api.kontenbase.com/query/api/v1/0283f447-fd6d-4c5c-8a7a-d21298c9406f/auth/register', body,config)
+            console.log(response);
+
+            if (response){
+                await AsyncStorage.setItem('token', response.data.token);
+            }
+
+            const value = await AsyncStorage.getItem('token');
+            if (value !== null) {
+                console.log(value);
+                navigation.navigate("Login")
+            }
+        } catch (error) {
+            console.log(error);
+            alert(error.response.data.message);
+        }
+    };
+
     return(
         <View style={styles.container}>
             <Image source={{uri:"https://res.cloudinary.com/dzayqrrm6/image/upload/v1667410255/Login_Icon_fq7d6g.png"}} style={{width :260, height:185}} />
             <Text style={styles.text}>Login</Text>
-            <TextInput placeholder="Email" style={styles.input}/>
-            <TextInput placeholder="Name" style={styles.input}/>
-            <TextInput placeholder="Password" style={styles.input}/>
-            <TouchableOpacity title="Login" style={styles.button}><Text style={{fontSize:20, fontWeight:'bold', color:"#FFFFFF"}}>Register</Text></TouchableOpacity>
+            <TextInput placeholder="Name" style={styles.input} onChangeText={(value) => handleOnChange('firstName', value)} value={form.firstName}/>
+            <TextInput placeholder="Email" style={styles.input} onChangeText={(value) => handleOnChange('email', value)} value={form.email}/>
+            <TextInput placeholder="Password" style={styles.input} onChangeText={(value) => handleOnChange('password', value)} value={form.password}/>
+            <TouchableOpacity title="Login" style={styles.button} onPress={handleOnPress}><Text style={{fontSize:20, fontWeight:'bold', color:"#FFFFFF"}}>Register</Text></TouchableOpacity>
             <Text>Joined us before? <Text style={{fontWeight:'bold', color:'#FF5555'}} onPress={() => navigation.navigate("Login")}>Login</Text></Text>
         </View>
     )

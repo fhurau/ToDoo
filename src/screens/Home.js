@@ -9,8 +9,8 @@ export default function Home ({navigation}){
             <Image source={{uri:"https://res.cloudinary.com/dzayqrrm6/image/upload/v1667403015/Ways_ToDO_dizq8s.png"}} style={{width :210, height:38}} />
             <Text style={styles.text}>Write your activity and finish your activity.
             Fast, Simple and Easy to Use</Text>
-            <TouchableOpacity title="Login" style={styles.buttonatas}><Text style={{fontSize:20, fontWeight:'bold', color:"#FFFFFF"}} onPress={() => navigation.navigate("Login")}>Login</Text></TouchableOpacity>
-            <TouchableOpacity title="Login" style={styles.buttonbawah}><Text style={{fontSize:20, fontWeight:'bold', color:"#FFFFFF"}} onPress={() => navigation.navigate("Register")}>Register</Text></TouchableOpacity>
+            <TouchableOpacity title="Login" style={styles.buttonatas} onPress={() => navigation.navigate("Login")}><Text style={{fontSize:20, fontWeight:'bold', color:"#FFFFFF"}}>Login</Text></TouchableOpacity>
+            <TouchableOpacity title="Login" style={styles.buttonbawah} onPress={() => navigation.navigate("Register")}><Text style={{fontSize:20, fontWeight:'bold', color:"#FFFFFF"}}>Register</Text></TouchableOpacity>
         </View>
     )
 }

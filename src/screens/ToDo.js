@@ -1,77 +1,58 @@
-import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useIsFocused } from "@react-navigation/native";
+import axios from "axios";
 import {
-    ScrollView,
-    Text,
-    HStack,
-    Box,
-    Input,
-    Icon,
-    Select,
-    CheckIcon,
-    VStack,
-    Image
+    Box, CheckIcon, HStack, Icon, Image, Input, Select, Text, View, VStack
 } from "native-base";
+import React from "react";
+import { StyleSheet } from "react-native";
+import { FlatList, Pressable, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 const check = "https://res.cloudinary.com/dzayqrrm6/image/upload/v1667482736/icon__Check_Circle__zk0lh7.png"
+const date ="https://res.cloudinary.com/dzayqrrm6/image/upload/v1667755170/Vector_qyrzjq.png"
 
-const List = [
-    {
-        id: 1,
-        category: "Study",
-        name: "golang",
-        date: "3 desember 2022",
-        status: check,
-    },
-    {
-        id: 2,
-        category: "Home work",
-        name: "mathematic",
-        date: "4 desember 2022",
-        status: check,
-    },
-    {
-        id: 3,
-        category: "Study",
-        name: "HTML",
-        date: "3 desember 2022",
-        status: check,
-    },
-    {
-        id: 4,
-        category: "Study",
-        name: "Javascript",
-        date: "9 desember 2022",
-        status: check,
-    },
-    {
-        id: 5,
-        category: "home work",
-        name: "Javascript",
-        date: "9 desember 2022",
-        status: check,
-    },
-    {
-        id: 6,
-        category: "home work",
-        name: "Javascript",
-        date: "9 desember 2022",
-        status: check,
-    },
-];
 
-export default ToDo = () => {
+
+export default ToDo = ({ navigation }) => {
+    const isFocused = useIsFocused();
+    const [list, setList] = React.useState([]);
+    const getData = async () => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + token
+                }
+            }
+
+            const res = await axios.get('https://api.v2.kontenbase.com/query/api/v1/0283f447-fd6d-4c5c-8a7a-d21298c9406f/ToDO?$lookup=*', config);
+            setList(res.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    React.useEffect(() => {
+        if (isFocused) {
+            getData();
+        }
+    }, [isFocused]);
+
     return (
-        <ScrollView w="full" mt="10" padding="5">
-            <HStack style={{justifyContent:"space-between"}}>
+        <View w="full" mt="10" padding="5">
+            <HStack style={{ justifyContent: "space-between" }}>
                 <Box>
                     <Text bold fontSize="xl" w="64">
                         Hi Fhurau
                     </Text>
                     <Text color="red.400">20 List</Text>
                 </Box>
-                
+
                 <Image source={{
                     uri: "https://res.cloudinary.com/dzayqrrm6/image/upload/v1667488842/Pngtree_character_default_avatar_5407167_q5ospz.png"
-                }} alt="Alternate Text" style={{width:50, height:50, borderRadius:10}} resizeMode="contain" />
+                }} alt="Alternate Text" style={{ width: 50, height: 50, borderRadius: 10 }} resizeMode="contain" />
             </HStack>
 
             <Input
@@ -121,62 +102,58 @@ export default ToDo = () => {
                     <Select.Item label="finished" value="finished" />
                 </Select>
             </HStack>
-            <ScrollView>
-            <Box mt={12}>
-                <VStack>
-                    {List.map((item) => {
-                        return (
-                            <HStack
-                                mb={6}
-                                backgroundColor="blue.100"
-                                borderRadius={5}
-                                padding="3"
-                                key={item.id}
-                                justifyContent={"space-between"}
-                            >
-                                <Box>
-                                    <Text bold fontSize="xs" w="64">
-                                        {item.category} - {item.name}
-                                    </Text>
-                                    <Text fontSize="2xs" w="64">
-                                        Learn Golang to improve fundamentals and familiarize with
-                                        coding.
-                                    </Text>
-                                    <Text fontSize="2xs" w="64" mt={3}>
-                                        {item.date}
-                                    </Text>
-                                </Box>
-                                <Box >
-                                    <Box
-                                        backgroundColor="red.300"
-                                        borderRadius={5}
-                                        marginRight="5"
-                                        alignItems={"flex-end"}
-                                    >
-                                        <Text
-                                            fontSize="10px"
-                                            color="black"
-                                            w={12}
-                                            textAlign="center"
-                                        >
-                                            {item.category}
-                                        </Text>
-                                    </Box >
-                                    <Image
-                                        mt={2}
-                                        source={{ uri: "https://res.cloudinary.com/dzayqrrm6/image/upload/v1667482736/icon__Check_Circle__zk0lh7.png" }}
-                                        resizeMode="contain"
-                                        alignItems="center"
-                                        alt={check}
-                                        style={{ width: 40, height: 40, }}
-                                    />
-                                </Box>
-                            </HStack>
-                        );
-                    })}
-                </VStack>
-            </Box>
-            </ScrollView>
-        </ScrollView>
+            <SafeAreaView>
+                {list &&
+                    <FlatList
+                        data={list}
+                        key={item => item.index}
+                        renderItem={({ item }) => (
+                            <Pressable onPress={() => navigation.navigate("Detail", { item })} style={styles.container}>
+                                <HStack>
+                                    <VStack style={styles.bg}>
+                                        <Text style={styles.hv}>{item.title}</Text>
+                                        <Text style={styles.hv}>{item.desc}</Text>
+                                        <Text style={styles.hv}><Image source={{ uri: date }} style={{ width: 17, height: 17, alignSelf:'center'}} alt="alt" />{item.date}</Text>
+                                    </VStack>
+                                    <VStack>
+                                        <Box backgroundColor="blue.300" borderRadius={5} margin="2">
+                                            <Text
+                                                fontSize="15px"
+                                                bold
+                                                color="white"
+                                                w={12}
+                                                textAlign="center"
+                                            >
+                                                {item?.category}
+                                            </Text>
+                                        </Box>
+                                        <TouchableOpacity style={{margin:2}}>
+                                            <Image source={{ uri: check }} style={{ width: 30, height: 30, alignSelf:'center'}} alt="alt" />
+                                        </TouchableOpacity>
+                                    </VStack>
+                                </HStack>
+                            </Pressable>
+                        )}
+                        keyExtractor={(item, index) => index}
+                    />
+                }
+            </SafeAreaView>
+        </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: '#DAEFFF',
+        margin: 5,
+        borderRadius: 10,
+        height:100
+    },
+    bg: {
+        padding:15,
+        width: 300
+    },
+    hv:{
+        marginVertical:1
+    }
+})

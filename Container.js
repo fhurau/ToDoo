@@ -10,6 +10,7 @@ import Register from "./src/screens/Register";
 import AddList from "./src/screens/AddList";
 import AddCategory from "./src/screens/AddCategory";
 import ToDo from "./src/screens/ToDo";
+import Detail from "./src/screens/Detail";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -50,6 +51,7 @@ export default function Container() {
         <Stack.Screen name="Login" component={Login} options={{headerShown: false}} />
         <Stack.Screen name="Register" component={Register} options={{headerShown: false}} />
         <Stack.Screen name="MyTab" component={MyTab} options={{ headerShown: false, headerTintColor:"white", headerMode:"screen"}}/>
+        <Stack.Screen name="Detail" component={Detail} />
         </Stack.Navigator>
       </NavigationContainer>
   )
